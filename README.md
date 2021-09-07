@@ -1,4 +1,4 @@
 # sqlalchemy-challenge
 
 
-Step 1 Reflect Tables into SQLAlchemy ORM  - completed
+Precipitation Analysis needs work --- error in calculations; Working Station Analysis
