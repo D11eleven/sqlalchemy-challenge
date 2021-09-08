@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # sqlalchemy-challenge
 
 
@@ -8,4 +8,4 @@ Precipitation Analysis and Working Station Analysis Complete   Climate App Worki
 # SQLAlchemy Homework - Surfs Up!
 
 
->>>>>>> 43a11f0a494c024b1a1a1e34c752105b7fbfb37e
+
