@@ -43,16 +43,16 @@ def welcome():
         f"Available Routes:<br/>"
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
-        f"/api/v1.0/tobs<br/>"
+        f"/api/v1.0/tobs<br/><br/>"
         f"/api/v1.0/<start><br/>"
-        # f"Enter startdate in yyyy,mm,dd format<br/>"
+        f"Enter startdate in yyyy-mm-dd format<br/>"
         f"/api/v1.0/<start>/<end><br/>"
-        # f"Enter startdate/enddate in yyyy,mm,dd format<br/>"
+        f"Enter startdate/enddate in yyyy-mm-dd format<br/>"
     )
 #####################################################################
 @app.route("/api/v1.0/precipitation")
 def precipitation():
-   
+    session = Session(engine)
     year_ago = dt.date(2017, 8, 23) - dt.timedelta(days=365)
 
     results = session.query(Measurement.date, Measurement.prcp).filter(Measurement.date >= year_ago).\
@@ -73,7 +73,7 @@ def precipitation():
 ######################################################################
 @app.route("/api/v1.0/stations")
 def stations():
-    
+    session = Session(engine)
     # recent_date = session.query(Measurement.date).order_by(Measurement.date.desc()).first()
     # return recent_date
     results = session.query(Station.id, Station.station, Station.name).all()
@@ -96,7 +96,7 @@ def stations():
 @app.route("/api/v1.0/tobs")
 def tobs():
     
-    
+    session = Session(engine)
     year_ago = dt.date(2017, 8, 23) - dt.timedelta(days=365)
 
 
@@ -123,31 +123,57 @@ def tobs():
 
 # # https://pythonexamples.org/python-if-not/
 
-# @app.route("/api/v1.0/<start>/")   
-# def tobstart(start=None, end=None):
+@app.route("/api/v1.0/<start>/")   
+def tobstart(start):
 
-#     sel = [ Measurement.date, func.min(Measurement.tobs), 
-#            func.max(Measurement.tobs),
-#            func.avg(Measurement.tobs)]
+    session = Session(engine)
 
-    # if not end:
-    #     results = session.query(*sel).\
-    #         filter(Measurement.date >= start).all()
+    sel = [func.min(Measurement.tobs), 
+           func.max(Measurement.tobs),
+           func.avg(Measurement.tobs)]
+
+    
+    results = session.query(*sel).\
+            filter(Measurement.date >= start).all()
             
-    #     tobs = list(np.ravel(results))
-    #     return_list = jsonify(tobs)
-    #     return return_list
+    tobs = list(np.ravel(results))
+    return_list = jsonify(tobs)
+    return return_list
+        
+    session.close()
 
-    #     results = session.query(*sel).\
-    #         filter(Measurement.date >= start).\
-    #         filter(Measurement.date <= end).all()
-    #     tobs = list(np.ravel(results))
-    #     return_list = jsonify(tobs)
-    #     return return_list
+    ############################################################
 
+@app.route("/api/v1.0/<start>/<end>")   
+def tobend(start, end):
 
+        session = Session(engine)
 
+        sel = [func.min(Measurement.tobs), 
+           func.max(Measurement.tobs),
+           func.avg(Measurement.tobs)]
 
+        
+        results = session.query(*sel).\
+                filter(Measurement.date >= start).all().\
+                filter(Measurement.date <= end).all()
+        
+
+        tobs = list(np.ravel(results))
+        return_list = jsonify(tobs)
+        return return_list
+
+            # results = session.query(*sel).\
+            #     filter(Measurement.date >= start).\
+            #     filter(Measurement.date <= end).all()
+                
+            # tobs = list(np.ravel(results))
+            # return_list = jsonify(tobs)
+            # return return_list
+
+session.close()
+
+    
 
 
 # @app.route("/api/v1.0/<start>/")   
@@ -165,7 +191,7 @@ def tobs():
     #    filter(Measurement.date >= start).all().\
     #    filter(Measurement.date <= end_date)
 
-    # # session.close()
+    # # 
 
     # temp_summary = []
     # for mmin, mmax, mavg in results:
@@ -196,7 +222,7 @@ def tobs():
 
 
 
-session.close()
+# session.close()
 
 if __name__ == "__main__":
         # print(home())
